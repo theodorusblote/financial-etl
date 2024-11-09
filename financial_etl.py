@@ -6,7 +6,7 @@ from sqlalchemy import create_engine
 
 def extract_data(ticker, period='5y', interval='1d'):
     """
-    Extracts historical data for a given ticker.
+    Extract historical data for a given ticker.
 
     Args:
         ticker (str): Ticker symbol.
@@ -17,11 +17,12 @@ def extract_data(ticker, period='5y', interval='1d'):
         pd.DataFrame: Dataframe containing historical data.
     """
     ticker = yf.Ticker(ticker)
+
     return ticker.history(period=period, interval=interval)
 
 def transform_data(df):
     """
-    Transforms data by adding technical indicators.
+    Transform data by adding technical indicators.
 
     Args:
         df (pd.DataFrame): Dataframe containing historical data.
@@ -46,7 +47,7 @@ def transform_data(df):
 
 def load_data(df):
     """
-    Loads DataFrame into a PostgreSQL database.
+    Load DataFrame into a PostgreSQL database.
 
     Args:
         df (pd.DataFrame): Dataframe containing transformed data.
@@ -64,7 +65,7 @@ def load_data(df):
     engine = create_engine(f'postgresql+psycopg2://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}')
 
     # Load DataFrame into SQL database
-    df.to_sql('stock_data', con=engine, if_exists='replace', index=False)
+    df.to_sql('stock_data', con=engine, if_exists='replace', index=True)
 
 def main():
     """
