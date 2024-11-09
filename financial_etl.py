@@ -1,5 +1,8 @@
 import yfinance as yf
 import ta
+from dotenv import load_dotenv
+import os
+from sqlalchemy import create_engine
 
 def extract_data(ticker, period, interval):
     """
@@ -40,3 +43,25 @@ def transform_data(df):
     df.dropna(inplace=True)
 
     return df
+
+def load_data(df):
+    """
+    Loads DataFrame into a PostgreSQL database.
+
+    Args:
+        df (pd.DataFrame): Dataframe containing transformed data.
+    """
+    # Load environment variables
+    load_dotenv()
+
+    DB_USERNAME = os.getenv('DB_USERNAME')
+    DB_PASSWORD = os.getenv('DB_PASSWORD')
+    DB_HOST = os.getenv('DB_HOST')
+    DB_PORT = os.getenv('DB_PORT')
+    DB_NAME = os.getenv('DB_NAME')
+
+    # Create SQL engine
+    engine = create_engine(f'postgresql+psycopg2://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}')
+
+    # Load DataFrame into SQL database
+    df.to_sql('stock_data', con=engine, if_exists='replace', index=False)
