@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 import os
 from sqlalchemy import create_engine
 
-def extract_data(ticker, period, interval):
+def extract_data(ticker, period='5y', interval='1d'):
     """
     Extracts historical data for a given ticker.
 
@@ -65,3 +65,16 @@ def load_data(df):
 
     # Load DataFrame into SQL database
     df.to_sql('stock_data', con=engine, if_exists='replace', index=False)
+
+def main():
+    """
+    Main function to execute the ETL (Extract, Transform, Load) Process.
+    """
+    ticker = "AAPL"
+
+    df = extract_data(ticker)
+    df = transform_data(df)
+    load_data(df)
+
+if __name__ == "__main__":
+    main()
